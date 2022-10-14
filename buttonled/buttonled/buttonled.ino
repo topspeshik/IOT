@@ -30,9 +30,6 @@ void loop() {
 
   if (count >= 19 and a > 0){
     click = !click;
-    // for (int i = 0; i<255; i++){
-    //   analogWrite(led_pin, i);
-    // }
     analogWrite(led_pin, a);
     a = a - 1;
 
