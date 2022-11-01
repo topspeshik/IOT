@@ -1,10 +1,10 @@
-from ast import Not
 from http import client
+
 import time
-from xmlrpc.client import MAXINT
 import paho.mqtt.client as mqtt_client
 import random
 import serial
+
 from statistics import mean
 
 que = []
