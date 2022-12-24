@@ -1,22 +1,21 @@
-#define ledPin 11
+#define led_pin 11
 
-bool ledPos = false;
+bool led_pos = false;
 
 void setup() {
-  pinMode(ledPin, OUTPUT);
+  pinMode(led_pin, OUTPUT);
+  pinMode(2, INPUT_PULLUP);
   cli();
   EICRA = 0;
-  EICRA = EICRA | (1 << ISC11);
-  EICRA = EICRA | (1 << ISC10);
-  EIMSK = EIMSK | (1 << INT1);
+  EICRA |= 1 << ISC01;
+  EIMSK |= (1<<INT0);
   sei();
 }
 
-ISR(INT1_vect){ 
-  ledPos = !ledPos;
+ISR(INT0_vect){ 
+  led_pos = !led_pos;
 }
 
 void loop() {
-  digitalWrite(ledPin, ledPos);
+  digitalWrite(led_pin, led_pos);
 }
-
