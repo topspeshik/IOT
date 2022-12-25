@@ -35,20 +35,20 @@ void setup() {
 
 
 void loop() {
- 	delay(100);
+  delay(100);
   count = Serial.available();
   if (count > 0){
     int *numbers = new int[count];
     for(int i = 0; i < count; i++){
       numbers[i] = Serial.read() - '0';
-      
+
     }
-  
+
     Serial.println(numbers[0]);
     if (count == 1){
       digitalWrite(lth, 0);
       shiftOut(dat, clk, LSBFIRST, bytes[numbers[0]]);
-      
+
       digitalWrite(lth, 1);
 
     }
@@ -58,6 +58,6 @@ void loop() {
       shiftOut(dat, clk, LSBFIRST, bytes[numbers[0]]);
       digitalWrite(lth, 1);
     }
-    
+
   }
 }
