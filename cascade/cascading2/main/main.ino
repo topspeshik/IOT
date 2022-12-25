@@ -1,26 +1,19 @@
-#define A  2
-#define B  3
-#define C  4
-#define D  5
-#define E  6
-#define F  7
-#define G  8
+#include <SoftwareSerial.h>
+
+#define A  7
+#define B  6
+#define C  8
+#define D  10
+#define E  11
+#define F  12
+#define G  13
 #define DP  9
 
-void setup() {
-  Serial.begin(9600);
-  while (!Serial) { }
-  pinMode(A, OUTPUT);
-  pinMode(B, OUTPUT);
-  pinMode(C, OUTPUT);
-  pinMode(D, OUTPUT);
-  pinMode(E, OUTPUT);
-  pinMode(F, OUTPUT);
-  pinMode(G, OUTPUT);
-  pinMode(DP, OUTPUT);
-}
 
-void led_on(int number){
+
+SoftwareSerial mySerial(3, 2);
+
+void show(int number){
   if (number == 0){
     digitalWrite(A, HIGH); 
     digitalWrite(B, HIGH);
@@ -114,28 +107,30 @@ void led_on(int number){
   }
 }
 
-void led_off(){
-  digitalWrite(A, LOW); 
-  digitalWrite(B, LOW);
-  digitalWrite(C, LOW);
-  digitalWrite(D, LOW);
-  digitalWrite(E, LOW);
-  digitalWrite(F, LOW);
-  digitalWrite(G, LOW);
-  digitalWrite(DP, LOW);
+void setup() {
+  Serial.begin(9600);
+  mySerial.begin(9600);
+  for (int i = 6; i <= 13; i++){
+    pinMode(i, OUTPUT);
+  }
+
 }
 
 void loop() {
-  delay(100);
-  if(Serial.available() > 0){
-    char input = Serial.read();
-    if (input == '-'){
-      led_off();
+  if (Serial.available() >= 1){
+    int num = 0;
+    byte data = Serial.read();
+    if (data >= '0' && data <= '9'){
+      num = data - '0';
     }
-    else{
-      int number = input - '0';
-      Serial.println(number);
-      led_on(number);
+    show(num);
+    delay(50);
+    if (Serial.available() >= 1){
+      while (Serial.available() >= 1){
+        mySerial.write(Serial.read());
+      }
+    }else{
+      mySerial.write(byte(0));
     }
   }
 }
