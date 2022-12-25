@@ -41,36 +41,6 @@ void loop() {
       shiftOut(dat, clk, LSBFIRST, bit[numbers[0]]);
       digitalWrite(lth, 1);
     }
-    else{
-      while(true){
-        for(int i = 0; i <= k + 1; i++){
-          if (i == 0){
-            digitalWrite(lth, 0);
-            shiftOut(dat, clk, LSBFIRST, bit[numbers[i]]);
-            shiftOut(dat, clk, LSBFIRST, bit[11]);
-            digitalWrite(lth, 1);
-          }
-          else if(i == k){
-            digitalWrite(lth, 0);
-            shiftOut(dat, clk, LSBFIRST, bit[11]);
-            shiftOut(dat, clk, LSBFIRST, bit[numbers[i-1]]);
-            digitalWrite(lth, 1);
-          }
-          else if(i == k+1){
-            digitalWrite(lth, 0);
-            shiftOut(dat, clk, LSBFIRST, bit[11]);
-            shiftOut(dat, clk, LSBFIRST, bit[11]);
-            digitalWrite(lth, 1);
-          }
-          else{
-            digitalWrite(lth, 0);
-            shiftOut(dat, clk, LSBFIRST, bit[numbers[i]]);
-            shiftOut(dat, clk, LSBFIRST, bit[numbers[i-1]]);
-            digitalWrite(lth, 1);
-          }
-          delay(500);
-        }
-      }
-    }
+   
   }
 }
