@@ -5,73 +5,73 @@
 
 int TU = 1000;
 long start = 0;
-
+int prev = HIGH;
+long letterMil = 0;
+long spaceMil = 0;
 int timings[20];
-bool levels[20];
 int current = 0;
-bool check_letters = false;
-bool is_idle = false;
 
-String ENCODED[] = {".-", "--.."};
-String LETTERS[] = {"A", "Z"};
-int n_letters = 2;
+
+String ENCODED[] = {".-","-...","-.-.","-..",".","..-.","--.","....","..",".---","-.-",".-..","--","-.","---",".--.","--.-",".-.","...","-","..-","...-",".--","-..-","-.--","--.."};
+char LETTERS[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+
 
 void setup() {
   Serial.begin(9600);
-  pinMode(DATA_PIN, INPUT);
-  attachInterrupt(0, process_timing, CHANGE);
+
 }
 
 void loop() {
-  Serial.println(current);
-  process_idle();
-  if (check_letters){
-    process_letter();
-    check_letters = false;
-  }
+  find_letter();
 }
 
 
 void process_letter(){
-  if (timings[current - 1] >= LETTER_SEP && levels[current - 1] == HIGH){
-    String letter = "";
-    for (int i = 0; i < current; i++){
-      if (timings[i] == 1 && levels[i] == DATA_LEVEL){
-        letter  += ".";
-      }
-      else if (timings[i] == 3 && levels[i] == DATA_LEVEL){
-        letter += ",";
-      }
+  String morse = "";
+  for ( int i=0 ; i<current; i++){
+    if (timings[i] == 3){
+      morse += '-';
     }
-    current = 0;
-    for (int iletter=0; iletter < n_letters; iletter++){
-      if (letter == ENCODED[iletter]){
-        Serial.println(LETTERS[iletter]);
-      }
+    else if (timings[i] == 1){
+      morse += '.';
+    }
+    timings[i] = 0;
+  }
+  for ( int i = 0; i < 26; i++){
+    if (morse == ENCODED[i]){
+      Serial.print(LETTERS[i]);
     }
   }
-}
-
-void process_timing(){
-  if (!is_idle){
-    timings[current] = millis() - start;
-    levels[current] = !digitalRead(DATA_PIN);
-    current++;
-    check_letters = true;
-  }
+ 
+  current = 0;
   
-  start = millis();
-  is_idle = false;
 }
 
 
-void process_idle(){
-  if (!is_idle && timings[current - 1] >= IDLE_SEP){
-    timings[current] = millis() - start;
-    levels[current] = 1;
-    current++;
-    start = millis();
-    check_letters = true;
-    is_idle = true;
+void find_letter(){
+  int currentState = digitalRead(DATA_PIN);
+ 
+  if (currentState == DATA_LEVEL  and prev == HIGH){
+    letterMil = millis();
+    
+    if(int(round((millis()+100-spaceMil)/TU) == 7))
+       Serial.print(' ');
+    
+    spaceMil = 0;
   }
+  else if (currentState == !DATA_LEVEL and prev == DATA_LEVEL)
+  {
+    spaceMil = millis();
+    timings[current] = int(round((millis()+100-letterMil)/TU));
+    current++;
+  }
+ 
+  if (current !=0 and (millis()-spaceMil)>= 2800 and spaceMil !=0)
+    process_letter();
+ 
+  
+  prev = currentState;
+  
+  
+  
 }
